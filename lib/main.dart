@@ -1,46 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:studio_6_layout_challenge/styles.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+      theme: Styles.generalTheme,
+      home: const MyHomePage(
+        title: 'Flutter Demo Home Page',
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
 
   final String title;
 
@@ -49,9 +30,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-
-  Map<String,String> forecast = {
+  Map<String, String> forecast = {
     "name": "today",
     "temperature": "35",
     "shortForecast": "Snowy",
@@ -60,7 +39,6 @@ class _MyHomePageState extends State<MyHomePage> {
     "windDirection": "SE",
     "isDaytime": "true",
     "probabilityOfPercipitation": "100"
-
   };
 
   Map<String, String> location = {
@@ -71,12 +49,101 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Text(location["city"]!);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Studio 6"),
+        backgroundColor: Colors.blue,
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Align(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  "Weather Forecaset\n${location["city"]!}, ${location["state"]!}, ${location["zip"]!}",
+                  style: const TextStyle(fontSize: 18.0),
+                ),
+              ),
+              mainCard(context),
+              secondaryCard(context)
+            ],
+          ),
+        ),
+      ),
+    );
   }
+
+  SizedBox secondaryCard(BuildContext context) {
+    return SizedBox(
+      width: cardSize(context, 0.8),
+      child: Card(
+        shadowColor: Styles.backGroundDark,
+        color: Styles.backGroundLight,
+        surfaceTintColor: Styles.accentColor,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                "${forecast["detailedForecast"]!} with ${forecast["probabilityOfPercipitation"]!}% chance of precipitation",
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              Text(
+                "Winds: ${forecast["windSpeed"]!}mph, ${forecast["windDirection"]!}",
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  SizedBox mainCard(BuildContext context) {
+    return SizedBox(
+      width: cardSize(context, 0.8),
+      height: cardSize(context, 0.8),
+      child: Card(
+        shadowColor: Styles.backGroundDark,
+        elevation: 8.0,
+        color: Styles.backGroundLight,
+        surfaceTintColor: Styles.accentColor,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children: [
+                Text(
+                  capitalize(forecast["name"]!),
+                  style: Styles.largeText,
+                ),
+                Text(
+                  "${forecast["temperature"]!}\u2109",
+                  style: Styles.giantText,
+                ),
+                Text(
+                  forecast["shortForecast"]!,
+                  style: Styles.largeText2,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  double cardSize(BuildContext context, double widthFactor) {
+    return MediaQuery.of(context).size.width * widthFactor;
+  }
+}
+
+String capitalize(String s) {
+  return s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
 }
